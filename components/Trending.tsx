@@ -30,7 +30,7 @@ const TrendingMovieItem = (props: TrendingMovieItemProps) => {
   return (
     <li className='relative flex-shrink-0 gap-12 flex justify-end items-center min-w-[180px]'>
       <h4
-        className='trending-number absolute top-9 -left-2.5'
+        className='trending-number absolute top-1/3 -left-2.5'
         style={{
           WebkitTextStroke: '2px #CECEFB66',
         }}>
