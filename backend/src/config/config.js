@@ -10,6 +10,10 @@ const envVarsSchema = Joi.object()
     PORT: Joi.number().default(8000),
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
     TMDB_API_KEY: Joi.string().required().description('JWT secret key'),
+    REDIS_URI: Joi.string().description('Redis Uri').default('127.0.0.1'),
+    REDIS_PORT: Joi.number().description('Redis Port').default(6379),
+    REDIS_ROLLOUT_THRESHOLD: Joi.number().description('Redis Rollout Threshold').default(3000),
+    REDIS_ROLLOUT_LIMIT: Joi.number().description('Redis Rollout Limit').default(20),
   })
   .unknown();
 
@@ -20,8 +24,18 @@ if (error) {
 }
 
 module.exports = {
-  env: envVars.NODE_ENV,
+  environment: envVars.NODE_ENV,
+  get isProduction() {
+    return this.environment === 'production';
+  },
+  get protocol() {
+    return this.isProduction ? 'https' : 'http';
+  },
   port: envVars.PORT,
+  redisUri: envVars.REDIS_URI,
+  redisPort: envVars.REDIS_PORT,
+  redisRolloutThreshold: envVars.REDIS_ROLLOUT_THRESHOLD,
+  redisRolloutLimit: envVars.REDIS_ROLLOUT_LIMIT,
   mongoose: {
     url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     options: {

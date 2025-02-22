@@ -9,7 +9,10 @@
       "#models/*": ["models/*"],
       "#routes/*": ["routes/*"],
       "#middlewares/*": ["middlewares/*"],
-      "#validations/*": ["validations/*"]
+      "#validations/*": ["validations/*"],
+      "#queues/*": ["queues/*"],
+      "#jobs/*": ["jobs/*"],
+      "#apis/*": ["apis/*"]
     }
   },
   "include": ["src"]

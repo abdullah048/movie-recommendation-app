@@ -41,6 +41,7 @@
     "prettier"
   ],
   "dependencies": {
+    "bullmq": "^5.41.5",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "cross-env": "^7.0.0",
@@ -50,6 +51,7 @@
     "express-rate-limit": "^5.0.0",
     "helmet": "^4.1.0",
     "http-status": "^1.4.0",
+    "ioredis": "^5.5.0",
     "joi": "^17.3.0",
     "module-alias": "^2.2.3",
     "moment": "^2.24.0",
@@ -78,6 +80,9 @@
     "#models": "./src/models",
     "#routes": "./src/routes",
     "#middlewares": "./src/middlewares",
-    "#validations": "./src/validations"
+    "#validations": "./src/validations",
+    "#queues": "./src/queues",
+    "#jobs": "./src/jobs",
+    "#apis": "./src/apis"
   }
 }
