@@ -9,7 +9,7 @@ const jobs = [
     name: 'Add Popular Movies from TMDB',
     handler: () => jobsQueue.add('addPopularMovies', {}),
     interval: MINUTE * 24 * 60,
-    runInDev: true,
+    // runInDev: true,
   },
 ];
 

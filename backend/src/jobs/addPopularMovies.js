@@ -1,7 +1,7 @@
 const tmdbApi = require('#apis/tmdb.api');
 
 const main = async () => {
-  const movies = await tmdbApi.getMoviesList();
+  const movies = await tmdbApi.getMovieGenres();
   console.log(movies);
 };
 

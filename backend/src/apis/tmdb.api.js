@@ -30,6 +30,11 @@ const getMoviesList = async () => {
   return instance.get('/movie/popular?language=en-US&page=1');
 };
 
+const getMovieGenres = async () => {
+  return instance.get('/genre/movie/list?language=en');
+};
+
 module.exports = {
   getMoviesList,
+  getMovieGenres,
 };
