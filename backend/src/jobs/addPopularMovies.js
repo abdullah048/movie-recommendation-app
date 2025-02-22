@@ -1,5 +1,8 @@
+const tmdbApi = require('#apis/tmdb.api');
+
 const main = async () => {
-  console.log('addPopularMovies working...');
+  const movies = await tmdbApi.getMoviesList();
+  console.log(movies);
 };
 
 module.exports = main;

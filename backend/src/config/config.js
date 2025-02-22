@@ -9,7 +9,8 @@ const envVarsSchema = Joi.object()
     NODE_ENV: Joi.string().valid('production', 'development').required(),
     PORT: Joi.number().default(8000),
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
-    TMDB_API_KEY: Joi.string().required().description('JWT secret key'),
+    TMDB_API_KEY: Joi.string().required().description('TMDB Api key'),
+    TMDB_BASE_URL: Joi.string().required().description('TMDB Api key'),
     REDIS_URI: Joi.string().description('Redis Uri').default('127.0.0.1'),
     REDIS_PORT: Joi.number().description('Redis Port').default(6379),
     REDIS_ROLLOUT_THRESHOLD: Joi.number().description('Redis Rollout Threshold').default(3000),
@@ -44,7 +45,10 @@ module.exports = {
       useUnifiedTopology: true,
     },
   },
-  tmdb: {
-    apiKey: envVars.TMDB_API_KEY,
+  apis: {
+    tmdb: {
+      apiKey: envVars.TMDB_API_KEY,
+      baseURL: envVars.TMDB_BASE_URL,
+    },
   },
 };
