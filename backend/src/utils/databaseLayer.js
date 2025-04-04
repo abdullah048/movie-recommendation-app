@@ -116,6 +116,7 @@ module.exports = (Model) => {
 
   const updateMany = (filter, update, options = {}) => model.updateMany(filter, update, { ...options, runValidators: true });
 
+  const bulkWrite = (writes, options) => model.bulkWrite(writes, options);
   return {
     create,
     insertMany,
@@ -130,5 +131,6 @@ module.exports = (Model) => {
     aggregate,
     findOneAndUpdate,
     updateMany,
+    bulkWrite,
   };
 };

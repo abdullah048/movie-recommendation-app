@@ -20,14 +20,22 @@ const onRejected = (err) => {
   if (err.response?.data === 'Unauthorized') {
     throw new ApiError(httpStatus.UNAUTHORIZED, `${err.response.data}`, err.response.data);
   }
-  const { status, title, detail } = err.response.data;
-  throw new ApiError(`${title || detail}`, 500, status);
+  const { title, detail } = err.response.data;
+  throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, `${title || detail}`);
 };
 
 instance.interceptors.response.use(onFulfilled, onRejected);
 
-const getMoviesList = async () => {
-  return instance.get('/movie/popular?language=en-US&page=1');
+const getMoviesList = async (page = 1) => {
+  return instance.get(`/movie/popular?language=en&page=${page}`);
+};
+
+const getMovieDetails = async (movieId) => {
+  return instance.get(`/movie/${movieId}?language=en`);
+};
+
+const getMovieTrailers = async (movieId) => {
+  return instance.get(`/movie/${movieId}/videos`);
 };
 
 const getMovieGenres = async () => {
@@ -37,4 +45,6 @@ const getMovieGenres = async () => {
 module.exports = {
   getMoviesList,
   getMovieGenres,
+  getMovieDetails,
+  getMovieTrailers,
 };

@@ -49,6 +49,7 @@ module.exports = {
     tmdb: {
       apiKey: envVars.TMDB_API_KEY,
       baseURL: envVars.TMDB_BASE_URL,
+      imageBaseURL: envVars.TMDB_IMAGE_BASE_URL,
     },
   },
 };
