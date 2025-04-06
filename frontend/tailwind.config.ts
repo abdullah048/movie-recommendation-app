@@ -24,6 +24,7 @@ export default {
           100: '#A8B5DB',
           150: '#CECEFB1A',
           200: '#CECEFB66',
+          300: '#9CA4AB',
         },
       },
       fontFamily: {
@@ -34,6 +35,9 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
         '8': '8px',
+      },
+      screens: {
+        xs: { max: '375px' },
       },
     },
   },

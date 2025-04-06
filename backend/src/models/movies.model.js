@@ -38,7 +38,7 @@ const schema = new Schema({
     required: true,
     trim: true,
   },
-  searchCount: {
+  viewCount: {
     type: Number,
     required: false,
     default: 0,
@@ -97,6 +97,27 @@ const schema = new Schema({
     required: false,
     default: null,
   },
+});
+
+schema.index(
+  {
+    name: 'text',
+    description: 'text',
+  },
+  { weights: { name: 10, description: 5 } }
+);
+
+schema.index({
+  externalId: 1,
+});
+schema.index({
+  releaseDate: 1,
+});
+schema.index({
+  viewCount: -1,
+});
+schema.index({
+  status: 1,
 });
 
 schema.plugin(toJSON);

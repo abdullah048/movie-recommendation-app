@@ -23,6 +23,14 @@ body {
     @apply text-[30px] leading-[32px] font-bold;
   }
 
+  .h4-bold {
+    @apply text-[20px] leading-6 font-bold;
+  }
+
+  .h5-bold {
+    @apply text-[16px] leading-6 font-bold;
+  }
+
   .placeholder {
     @apply text-lg font-normal text-light-gray-100;
   }
@@ -34,6 +42,11 @@ body {
     &::-webkit-scrollbar {
       display: none;
     }
+  }
+
+  .bg-shadow {
+    box-shadow: inset 0px 12px 32px 0px rgba(206, 206, 251, 0.02);
+    backdrop-filter: blur(16px);
   }
 }
 

@@ -40,8 +40,8 @@ const TrendingMovieItem = (props: TrendingMovieItemProps) => {
         src={image}
         alt={`image-${id}`}
         width={107}
-        height={143}
-        className='object-contain rounded-8 relative z-10 h-auto w-auto'
+        height={187}
+        className='object-contain rounded-8 relative z-10 h-[187px] w-auto'
       />
     </li>
   );
