@@ -39,6 +39,9 @@ export default {
       screens: {
         xs: { max: '375px' },
       },
+      padding: {
+        '50': '50px',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

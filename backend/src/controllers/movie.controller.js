@@ -10,6 +10,15 @@ const getMovies = catchAsync(async (req, res) => {
   });
 });
 
+const getMovie = catchAsync(async (req, res) => {
+  const movie = await movieService.getMovieDetail(req.params);
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: movie,
+  });
+});
+
 module.exports = {
   getMovies,
+  getMovie,
 };

@@ -61,3 +61,8 @@ export type Movie = {
   tagline: string | null;
   trailer: Trailer | null;
 };
+
+export type MovieApiResponse = {
+  success: boolean;
+  data: Movie;
+};

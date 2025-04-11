@@ -7,6 +7,13 @@ const getMovies = {
   }),
 };
 
+const getMovie = {
+  params: Joi.object().keys({
+    id: Joi.string().required().trim(),
+  }),
+};
+
 module.exports = {
   getMovies,
+  getMovie,
 };

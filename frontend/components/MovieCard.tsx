@@ -7,9 +7,10 @@ import { useRouter } from 'next/navigation';
 
 type MovieCardProps = {
   movie: Movie;
+  index: number;
 };
 
-const MovieCard = ({ movie }: MovieCardProps) => {
+const MovieCard = ({ movie, index }: MovieCardProps) => {
   const router = useRouter();
   return (
     <motion.div
@@ -18,6 +19,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
+      custom={index}
       className='bg-black-150 cursor-pointer text-white p-5 rounded-2xl flex flex-col gap-3 bg-shadow'>
       <Image
         className='w-full h-auto object-contain rounded-8'

@@ -3,7 +3,11 @@ const Model = require('#models/movies.model');
 const { findByExternalId } = require('#services/genre.service');
 const config = require('#config/config');
 
-const { find, count, updateOne } = databaseLayer(Model);
+const { find, count, updateOne, findById } = databaseLayer(Model);
+
+const findMovieById = async (movieId) => {
+  return findById(movieId).populate('genres', 'name');
+};
 
 const updateMoviesFromTMDB = async (movie) => {
   if (!movie) return;
@@ -74,7 +78,13 @@ const getPaginatedMovies = async (query) => {
   };
 };
 
+const getMovieDetail = async (params) => {
+  const { id } = params;
+  return await findMovieById(id);
+};
+
 module.exports = {
   updateMoviesFromTMDB,
   getPaginatedMovies,
+  getMovieDetail,
 };
