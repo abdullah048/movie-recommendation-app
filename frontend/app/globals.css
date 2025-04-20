@@ -48,6 +48,10 @@ body {
     box-shadow: inset 0px 12px 32px 0px rgba(206, 206, 251, 0.02);
     backdrop-filter: blur(16px);
   }
+
+  .primary-gradient {
+    background: linear-gradient(90deg, #d6c7ff 0%, #ab8bff 100%);
+  }
 }
 
 @layer base {

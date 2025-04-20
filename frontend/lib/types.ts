@@ -59,6 +59,7 @@ export type Movie = {
   revenue: number;
   status: string | null;
   tagline: string | null;
+  runtime: number | null;
   trailer: Trailer | null;
 };
 
