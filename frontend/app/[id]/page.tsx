@@ -61,6 +61,7 @@ export default async function MovieDetailPage(props: {
         posterPath={data?.posterPath || null}
         backdropPath={data?.backdropPath || null}
         name={data?.name || 'movie-name'}
+        trailer={data?.trailer || null}
       />
       {/* Relevant Info */}
       <div className='mt-8 flex flex-col gap-5'>
@@ -76,17 +77,19 @@ export default async function MovieDetailPage(props: {
               ))}
             </div>
           </div>
-          <Link href={data?.homepageUrl || ''} passHref target='_blank'>
-            <Button className='primary-gradient max-w-full w-full md:max-w-[186px] px-5 py-3 text-black-250 text-base font-semibold'>
-              Visit Homepage
-              <Image
-                src='/arrow-right-black.svg'
-                alt='arrow left'
-                width={22}
-                height={22}
-              />
-            </Button>
-          </Link>
+          {data?.homepageUrl && (
+            <Link href={data?.homepageUrl} passHref target='_blank'>
+              <Button className='primary-gradient max-w-full w-full md:max-w-[186px] px-5 py-3 text-black-250 text-base font-semibold'>
+                Visit Homepage
+                <Image
+                  src='/arrow-right-black.svg'
+                  alt='arrow left'
+                  width={22}
+                  height={22}
+                />
+              </Button>
+            </Link>
+          )}
         </div>
         {/* Overview */}
         <div className='flex 425:flex-col flex-row items-start'>

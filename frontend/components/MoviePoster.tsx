@@ -4,17 +4,21 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { Trailer } from '@/lib/types';
+import TrailerModal from './TrailerModal';
 
 type MoviePosterProps = {
   posterPath: string | null;
   name: string;
   backdropPath: string | null;
+  trailer: Trailer | null;
 };
 
 const MoviePoster = (props: MoviePosterProps) => {
-  const { backdropPath, name, posterPath } = props;
+  const { backdropPath, name, posterPath, trailer } = props;
   const [posterLoaded, setPosterLoaded] = useState(false);
   const [backdropLoaded, setBackdropLoaded] = useState(false);
+
   return (
     <div className='mt-8 flex gap-6'>
       {!posterLoaded && (
@@ -44,13 +48,8 @@ const MoviePoster = (props: MoviePosterProps) => {
           height={441}
           onLoad={() => setBackdropLoaded(true)}
         />
-        {backdropLoaded && (
-          <div className='cursor-pointer bg-light-gray-50 absolute bottom-[5%] left-[5%] max-w-[185px] max-h-[42px] rounded-45 px-4 py-2 flex gap-2.5 items-center justify-center backdrop-blur-10'>
-            <Image src='/play.svg' alt='play-svg' width={24} height={24} />
-            <span className='text-white text-base font-semibold'>Trailer</span>
-            <span className='text-light-gray-100'>•</span>
-            <span>00:31</span>
-          </div>
+        {backdropLoaded && trailer && (
+          <TrailerModal name={name} youtubeId={trailer?.key} />
         )}
       </div>
     </div>
