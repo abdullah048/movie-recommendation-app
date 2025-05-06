@@ -11,6 +11,16 @@ export type MoviesApiResponse = {
   };
 };
 
+export type TrendingPoster = {
+  id: string;
+  posterPath: string | null;
+};
+
+export type TrendingPostersApiResponse = {
+  success: boolean;
+  data: TrendingPoster[];
+};
+
 export type Genre = {
   id: string;
   name: string;
@@ -46,10 +56,11 @@ export type Movie = {
   name: string;
   externalId: string;
   genres: Genre[];
+  viewCount: number;
   description: string;
   posterPath: string | null;
   backdropPath: string | null;
-  releaseDate: string;
+  releaseDate: string | null;
   searchCount: string;
   budget: number;
   homepageUrl: string | null;
@@ -67,3 +78,5 @@ export type MovieApiResponse = {
   success: boolean;
   data: Movie;
 };
+
+export type HomeProps = { search?: string; page?: string };

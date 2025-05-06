@@ -1,13 +1,13 @@
-import { MovieApiResponse } from '@/lib/types';
-import { TrendingUp } from 'lucide-react';
-import dayjs from 'dayjs';
-import MovieDuration from '@/components/MovieDuration';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
 import Badge from '@/components/Badge';
-import { convertPriceToMillion } from '@/lib/utils';
-import Link from 'next/link';
+import MovieDuration from '@/components/MovieDuration';
 import MoviePoster from '@/components/MoviePoster';
+import { Button } from '@/components/ui/button';
+import { getMovieById, incrementViewCount } from '@/data/movies';
+import { convertPriceToMillion } from '@/lib/utils';
+import dayjs from 'dayjs';
+import { TrendingUp } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 type MovieDetailPageProps = {
   id: string;
@@ -17,20 +17,8 @@ export default async function MovieDetailPage(props: {
   params: Promise<MovieDetailPageProps>;
 }) {
   const params = await props.params;
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  let data = null;
-  try {
-    const res = await fetch(`${baseUrl}/movies/${params.id}`, {
-      cache: 'no-store',
-    });
-    const response = (await res.json()) as MovieApiResponse;
-    if (response.success) {
-      data = response.data;
-    }
-  } catch (error) {
-    console.warn('Error while fetching movie details: ' + error);
-  }
-
+  const data = await getMovieById(params.id);
+  incrementViewCount(params.id);
   return (
     <div className='p-6 lg:p-50 min-h-screen bg-black-150'>
       {/* Titles */}
@@ -40,7 +28,11 @@ export default async function MovieDetailPage(props: {
             {data?.name || 'Movie title'}
           </h3>
           <div className='flex gap-2.5 items-center text-lg text-light-gray-100'>
-            <span>{dayjs(data?.releaseDate).year()}</span>
+            <span>
+              {data?.releaseDate
+                ? dayjs(data?.releaseDate).year()
+                : 'Unknown Release Date'}
+            </span>
             <span className='text-light-gray-100'>•</span>
             <span>PG-13</span>
             <span className='text-light-gray-100'>•</span>
@@ -52,7 +44,8 @@ export default async function MovieDetailPage(props: {
             <span className='font-semibold text-white'>8.9</span>/10&nbsp;(200K)
           </div>
           <div className='flex gap-2.5 items-center bg-black-200 py-2 px-4 font-dm-sans text-light-gray-100 text-base rounded-6'>
-            <TrendingUp className='w-6 h-6' />1
+            <TrendingUp className='w-6 h-6' />
+            {data?.viewCount}
           </div>
         </div>
       </div>
@@ -106,7 +99,10 @@ export default async function MovieDetailPage(props: {
             Release Date
           </span>
           <span className='max-w-[800px] text-sm text-primary-50 font-semibold text-justify'>
-            {dayjs(data?.releaseDate).format('MMMM D, YYYY')}&nbsp;(Worldwide)
+            {data?.releaseDate
+              ? dayjs(data?.releaseDate).format('MMMM D, YYYY')
+              : 'Unknown Release Date'}
+            &nbsp;(Worldwide)
           </span>
         </div>
         {/* Countries */}
@@ -167,7 +163,7 @@ export default async function MovieDetailPage(props: {
         </div>
         {/* Production Companies */}
         <div className='flex 425:flex-col flex-row items-start'>
-          <span className='text-light-gray-100 text-lg 425:max-w-full min-w-[150px] lg:max-w-[150px] lg:min-w-0'>
+          <span className='text-light-gray-100 text-lg 425:w-full w-[150px] lg:max-w-[150px] lg:min-w-0'>
             Production Companies
           </span>
           <ul className='max-w-[800px] flex gap-2.5 flex-wrap text-sm text-primary-50 font-semibold text-justify'>

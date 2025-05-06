@@ -42,9 +42,14 @@ const getMovieGenres = async () => {
   return instance.get('/genre/movie/list?language=en');
 };
 
+const searchMovieByName = async (name) => {
+  return instance.get(`/search/movie?query=${name}&language=en`);
+};
+
 module.exports = {
   getMoviesList,
   getMovieGenres,
   getMovieDetails,
   getMovieTrailers,
+  searchMovieByName,
 };

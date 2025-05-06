@@ -18,7 +18,24 @@ const getMovie = catchAsync(async (req, res) => {
   });
 });
 
+const increaseMovieSearchCount = catchAsync(async (req, res) => {
+  await movieService.incrementMovieSearchCount(req.body);
+  res.status(httpStatus.OK).json({
+    success: true,
+  });
+});
+
+const getTrendingPosters = catchAsync(async (req, res) => {
+  const data = await movieService.fetchTrendingMoviePosters();
+  res.status(httpStatus.OK).json({
+    success: true,
+    data,
+  });
+});
+
 module.exports = {
   getMovies,
   getMovie,
+  increaseMovieSearchCount,
+  getTrendingPosters,
 };

@@ -23,6 +23,12 @@ const jobs = [
     interval: MINUTE * 24 * 60,
     runInDev: false,
   },
+  {
+    name: 'Append Searched Movies To Database',
+    handler: () => jobsQueue.add('processSearchedMoviesAndAppendToDB', {}),
+    interval: MINUTE * 15,
+    runInDev: true,
+  },
 ];
 
 module.exports = () => {

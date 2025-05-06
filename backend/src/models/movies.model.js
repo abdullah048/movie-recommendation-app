@@ -35,8 +35,9 @@ const schema = new Schema({
   },
   releaseDate: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
+    default: null,
   },
   viewCount: {
     type: Number,

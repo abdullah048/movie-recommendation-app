@@ -1,34 +1,24 @@
-const logger = require('#config/logger');
+// job.queue.js
 const { create } = require('#config/queue');
-const redisInstance = require('#config/redis');
-const addPopularMoviesJob = require('#jobs/addPopularMovies');
-const addGenresJob = require('#jobs/addGenres');
-const processMoviesAndAppendToDBJob = require('#jobs/processMoviesAndAppendToDB');
 const { Worker } = require('bullmq');
+const redisInstance = require('#config/redis');
 
-const queue = create('jobs');
+const jobsQueue = create('jobs');
 
-async function processJob(job) {
-  console.log(`Processing job: ${job.name}`, job.data);
+const jobsWorker = new Worker(
+  'jobs',
+  async (job) => {
+    const { name, data } = job;
+    const jobHandlers = require('#jobs/jobHandlers'); // Import mapping
+    const handler = jobHandlers[name];
 
-  switch (job.name) {
-    case 'addPopularMovies':
-      await addPopularMoviesJob(job.data);
-      break;
-    case 'addGenres':
-      await addGenresJob(job.data);
-      break;
-    case 'processMoviesAndAppendToDB':
-      await processMoviesAndAppendToDBJob(job.data);
-      break;
-    default:
-      logger.error(`Unknown job type: ${job.name}`);
-  }
-}
+    if (handler) {
+      await handler(data);
+    } else {
+      console.error(`No handler found for job: ${name}`);
+    }
+  },
+  { connection: redisInstance }
+);
 
-const worker = new Worker('jobs', processJob, { connection: redisInstance });
-
-module.exports = {
-  jobsQueue: queue,
-  jobsWorker: worker,
-};
+module.exports = { jobsQueue, jobsWorker };

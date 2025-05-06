@@ -2,11 +2,22 @@ const databaseLayer = require('#utils/databaseLayer');
 const Model = require('#models/movies.model');
 const { findByExternalId } = require('#services/genre.service');
 const config = require('#config/config');
+const ApiError = require('#utils/ApiError');
+const httpStatus = require('http-status');
+const { jobsQueue } = require('#queues/job.queue');
+const tmdbApi = require('#apis/tmdb.api');
 
 const { find, count, updateOne, findById } = databaseLayer(Model);
 
 const findMovieById = async (movieId) => {
   return findById(movieId).populate('genres', 'name');
+};
+
+const findMoviesPosterPathByViewCount = async (limit = 6) => {
+  return find({}, 'posterPath', {
+    sort: '-viewCount',
+    limit,
+  });
 };
 
 const updateMoviesFromTMDB = async (movie) => {
@@ -62,13 +73,18 @@ const getPaginatedMovies = async (query) => {
 
   const projection = search ? { score: { $meta: 'textScore' } } : {};
 
-  const [results, total] = await Promise.all([
-    find(finalQuery, projection).populate({ path: 'genres', select: '_id name' }).sort('-createdAt').skip(skip).limit(limit),
+  const [dbResults, total] = await Promise.all([
+    find(finalQuery, projection).populate({ path: 'genres', select: '_id name' }).sort('createdAt').skip(skip).limit(limit),
     count(finalQuery),
   ]);
 
+  if (dbResults.length === 0) {
+    const result = await tmdbApi.searchMovieByName(search);
+    await jobsQueue.add('addSearchedMoviesToDB', result);
+  }
+
   return {
-    movies: results,
+    movies: dbResults,
     pagination: {
       page: +page,
       limit: +limit,
@@ -83,8 +99,22 @@ const getMovieDetail = async (params) => {
   return await findMovieById(id);
 };
 
+const incrementMovieSearchCount = async (body) => {
+  const { id } = body;
+  const viewCount = 1;
+  const movie = await findMovieById(id);
+  if (!movie) throw new ApiError(httpStatus.NOT_FOUND, 'No movie found for provided id');
+  return updateOne({ _id: id }, { $inc: { viewCount } });
+};
+
+const fetchTrendingMoviePosters = async () => {
+  return findMoviesPosterPathByViewCount();
+};
+
 module.exports = {
   updateMoviesFromTMDB,
   getPaginatedMovies,
   getMovieDetail,
+  incrementMovieSearchCount,
+  fetchTrendingMoviePosters,
 };
