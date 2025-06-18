@@ -10,11 +10,17 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export async function generateMetadata(props: {
-  params: { id: string };
+type MovieDetailPageProps = {
+  id: string;
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<MovieDetailPageProps>;
 }): Promise<Metadata> {
-  const params = await props.params;
-  const movie = await getMovieById(params.id);
+  const paramsObject = await params;
+  const movie = await getMovieById(paramsObject.id);
 
   const title = movie?.name
     ? `${movie.name} - Watch, Rate & Discover | MovieMosaic`
@@ -24,7 +30,7 @@ export async function generateMetadata(props: {
     ? movie.description.slice(0, 160)
     : 'Explore movie details, release info, genres, and more on MovieMosaic.';
 
-  const url = `https://moviemosaic.com/movie/${params.id}`;
+  const url = `https://moviemosaic.com/movie/${paramsObject.id}`;
   const image =
     movie?.posterPath || movie?.backdropPath
       ? `https://image.tmdb.org/t/p/original/${
@@ -36,7 +42,7 @@ export async function generateMetadata(props: {
     title,
     description,
     keywords: [
-      movie?.name!,
+      movie?.name || 'MovieMosaic',
       'movie details',
       'watch movie online',
       'movie genres',
@@ -65,16 +71,14 @@ export async function generateMetadata(props: {
   };
 }
 
-type MovieDetailPageProps = {
-  id: string;
-};
-
-export default async function MovieDetailPage(props: {
+export default async function MovieDetailPage({
+  params,
+}: {
   params: Promise<MovieDetailPageProps>;
 }) {
-  const params = await props.params;
-  const data = await getMovieById(params.id);
-  incrementViewCount(params.id);
+  const paramsObject = await params;
+  const data = await getMovieById(paramsObject.id);
+  incrementViewCount(paramsObject.id);
   return (
     <div className='p-6 lg:p-50 min-h-screen bg-black-150'>
       {/* Titles */}
