@@ -1,27 +1,28 @@
-# ------------ STAGE 1: Build Dependencies ------------ #
+# ------------ STAGE 1: Build ------------ #
 FROM node:lts-alpine AS builder
 
-# Create app directory
 WORKDIR /app
 
-# Install only production dependencies first for caching
+# Install dependencies
 COPY package.json package-lock.json* ./
 RUN npm ci --omit=dev
 
-# Copy the rest of the app source
+# Copy app source
 COPY . .
 
-# Optionally: transpile, build static assets, etc.
+# (Optional) Build if you're transpiling
 # RUN npm run build
 
-# Copy only production node_modules and built code
+# ------------ STAGE 2: Production ------------ #
+FROM node:lts-alpine AS production
+
+WORKDIR /app
+
+# Copy only production modules and source code
 COPY --from=builder /app /app
 
-# Set environment variables
 ENV NODE_ENV=production
 
-# Expose app port (update if yours is different)
 EXPOSE 8000
 
-# Run the app
 CMD ["node", "src/index.js"]
