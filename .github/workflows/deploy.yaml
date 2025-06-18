@@ -20,9 +20,6 @@ jobs:
       - name: 🚀 Deploy Backend & Frontend
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }} << 'EOF'
-            mkdir -p /srv/movies/backend
-            mkdir -p /srv/movies/frontend
-
             cd /srv/movies/backend
             docker-compose pull
             docker-compose up -d
