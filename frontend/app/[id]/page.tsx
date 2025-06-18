@@ -6,8 +6,64 @@ import { getMovieById, incrementViewCount } from '@/data/movies';
 import { convertPriceToMillion } from '@/lib/utils';
 import dayjs from 'dayjs';
 import { TrendingUp } from 'lucide-react';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+
+export async function generateMetadata(props: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const params = await props.params;
+  const movie = await getMovieById(params.id);
+
+  const title = movie?.name
+    ? `${movie.name} - Watch, Rate & Discover | MovieMosaic`
+    : 'Movie Details | MovieMosaic';
+
+  const description = movie?.description
+    ? movie.description.slice(0, 160)
+    : 'Explore movie details, release info, genres, and more on MovieMosaic.';
+
+  const url = `https://moviemosaic.com/movie/${params.id}`;
+  const image =
+    movie?.posterPath || movie?.backdropPath
+      ? `https://image.tmdb.org/t/p/original/${
+          movie.posterPath || movie.backdropPath
+        }`
+      : 'https://moviemosaic.com/default-og-image.jpg';
+
+  return {
+    title,
+    description,
+    keywords: [
+      movie?.name!,
+      'movie details',
+      'watch movie online',
+      'movie genres',
+      'movie runtime',
+      'MovieMosaic',
+    ].filter(Boolean),
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'video.movie',
+      siteName: 'MovieMosaic',
+      images: [{ url: image, width: 1200, height: 630, alt: movie?.name }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image],
+    },
+    robots: 'index, follow',
+    alternates: {
+      canonical: url,
+    },
+    metadataBase: new URL('https://moviemosaic.com'),
+  };
+}
 
 type MovieDetailPageProps = {
   id: string;

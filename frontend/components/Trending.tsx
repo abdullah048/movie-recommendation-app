@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
+import EmptyState from '@/components/empty-states/EmptyState';
 
 type TrendingProps = {
   trendingPosters: TrendingPoster[] | null;
@@ -15,15 +16,20 @@ type TrendingProps = {
 
 const Trending = (props: TrendingProps) => {
   const { trendingPosters } = props;
+
   return (
     <Section title='Trending'>
-      <ul className='list-none flex gap-[46px] items-center overflow-x-auto whitespace-nowrap min-w-full hide-scrollbar'>
-        <AnimatePresence mode='sync'>
-          {trendingPosters?.map((movie, index) => (
-            <TrendingMovieItem movie={movie} key={movie.id} number={index} />
-          ))}
-        </AnimatePresence>
-      </ul>
+      {Array.isArray(trendingPosters) && trendingPosters.length === 0 ? (
+        <EmptyState text='No trending movies found' />
+      ) : (
+        <ul className='list-none flex gap-[46px] items-center overflow-x-auto whitespace-nowrap min-w-full hide-scrollbar'>
+          <AnimatePresence mode='sync'>
+            {trendingPosters?.map((movie, index) => (
+              <TrendingMovieItem movie={movie} key={movie.id} number={index} />
+            ))}
+          </AnimatePresence>
+        </ul>
+      )}
     </Section>
   );
 };
@@ -66,6 +72,7 @@ const TrendingMovieItem = (props: TrendingMovieItemProps) => {
         src={posterPath ?? '/No-Poster.png'}
         alt={`image-${id}`}
         width={107}
+        loading='lazy'
         height={187}
         onLoad={() => setLoaded(true)}
         className={cn(

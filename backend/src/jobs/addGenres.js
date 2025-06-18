@@ -3,7 +3,7 @@ const { updateGenresFromTMDB } = require('#services/genre.service');
 
 const main = async () => {
   try {
-    const genres = await tmdbApi.getMovieGenres();
+    const { genres } = await tmdbApi.getMovieGenres();
     await updateGenresFromTMDB(genres);
   } catch (error) {
     console.log('Error in addGenres job: ' + error);

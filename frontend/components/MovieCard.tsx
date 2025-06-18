@@ -32,6 +32,7 @@ const MovieCard = ({ movie, index }: MovieCardProps) => {
           'w-full h-auto object-contain rounded-8',
           loaded ? 'opacity-100 static' : 'opacity-0 absolute'
         )}
+        loading='lazy'
         src={movie.posterPath ?? '/No-Poster.png'}
         alt={movie.name}
         width={264}

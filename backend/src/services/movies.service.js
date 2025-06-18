@@ -1,13 +1,14 @@
 const databaseLayer = require('#utils/databaseLayer');
 const Model = require('#models/movies.model');
-const { findByExternalId } = require('#services/genre.service');
+const { findByExternalId, findByName } = require('#services/genre.service');
 const config = require('#config/config');
 const ApiError = require('#utils/ApiError');
 const httpStatus = require('http-status');
 const { jobsQueue } = require('#queues/job.queue');
 const tmdbApi = require('#apis/tmdb.api');
+const { getHomepageBuckets } = require('#utils/dailyBuckets');
 
-const { find, count, updateOne, findById } = databaseLayer(Model);
+const { find, count, updateOne, findById, aggregate } = databaseLayer(Model);
 
 const findMovieById = async (movieId) => {
   return findById(movieId).populate('genres', 'name');
@@ -60,24 +61,43 @@ const updateMoviesFromTMDB = async (movie) => {
 };
 
 const getPaginatedMovies = async (query) => {
-  const { page, limit = 12, search } = query;
+  const { page = 1, limit = 12, search } = query;
   const skip = (page - 1) * limit;
 
-  const queryConditions = [];
+  // If no search term, show homepage data instead
+  if (!search) {
+    const homepageData = await getHomepageMovies();
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedData = homepageData.slice(startIndex, endIndex);
 
-  if (search) {
-    queryConditions.push({ $text: { $search: search } });
+    return {
+      movies: paginatedData,
+      pagination: {
+        page: +page,
+        limit: +limit,
+        total: homepageData.length,
+        totalPages: Math.ceil(homepageData.length / limit),
+      },
+    };
   }
 
-  const finalQuery = queryConditions.length ? { $and: queryConditions } : {};
+  // Build search-based DB query
+  const queryConditions = [{ $text: { $search: search } }];
+  const finalQuery = { $and: queryConditions };
+  const projection = { score: { $meta: 'textScore' } };
 
-  const projection = search ? { score: { $meta: 'textScore' } } : {};
-
+  // Fetch paginated results and total count
   const [dbResults, total] = await Promise.all([
-    find(finalQuery, projection).populate({ path: 'genres', select: '_id name' }).sort('createdAt').skip(skip).limit(limit),
+    find(finalQuery, projection)
+      .populate({ path: 'genres', select: '_id name' })
+      .sort({ score: { $meta: 'textScore' } })
+      .skip(skip)
+      .limit(limit),
     count(finalQuery),
   ]);
 
+  // If nothing found, trigger background TMDB fetch
   if (dbResults.length === 0) {
     const result = await tmdbApi.searchMovieByName(search);
     await jobsQueue.add('addSearchedMoviesToDB', result);
@@ -111,10 +131,56 @@ const fetchTrendingMoviePosters = async () => {
   return findMoviesPosterPathByViewCount();
 };
 
+const getMoviesFromBucket = async (bucket) => {
+  const { query = {}, sort, useSample, isGenreBased } = bucket;
+  let movieQuery = { ...query };
+
+  if (isGenreBased && query.genres) {
+    const genreFilter = query.genres;
+    const genreNames =
+      typeof genreFilter === 'string' ? [genreFilter] : Array.isArray(genreFilter.$in) ? genreFilter.$in : [];
+    const genres = await findByName(genreNames);
+    const genreIds = genres.map((g) => g._id);
+    movieQuery.genres = { $in: genreIds };
+  }
+
+  if (useSample) {
+    return await aggregate([
+      { $match: movieQuery },
+      { $sample: { size: 12 } },
+      {
+        $lookup: {
+          from: 'genres',
+          localField: 'genres',
+          foreignField: '_id',
+          as: 'genres',
+        },
+      },
+    ]);
+  }
+
+  return await find(movieQuery).sort(sort).limit(12).populate({ path: 'genres', select: '_id name' });
+};
+
+const getHomepageMovies = async () => {
+  const moviesSet = new Map();
+  const buckets = await getHomepageBuckets();
+  for (const bucket of buckets) {
+    const movies = await getMoviesFromBucket(bucket);
+    for (const movie of movies) {
+      moviesSet.set(String(movie.id), movie);
+    }
+  }
+  const uniqueMovies = Array.from(moviesSet.values());
+  return uniqueMovies;
+};
+
 module.exports = {
   updateMoviesFromTMDB,
   getPaginatedMovies,
   getMovieDetail,
   incrementMovieSearchCount,
   fetchTrendingMoviePosters,
+  getMoviesFromBucket,
+  getHomepageMovies,
 };

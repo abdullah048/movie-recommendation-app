@@ -21,7 +21,7 @@ const jobs = [
     name: 'Fetch Movie Details From TMDB And Append To DB',
     handler: () => jobsQueue.add('processMoviesAndAppendToDB', {}),
     interval: MINUTE * 24 * 60,
-    runInDev: false,
+    runInDev: true,
   },
   {
     name: 'Append Searched Movies To Database',

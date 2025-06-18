@@ -9,7 +9,7 @@ const jobsWorker = new Worker(
   'jobs',
   async (job) => {
     const { name, data } = job;
-    const jobHandlers = require('#jobs/jobHandlers'); // Import mapping
+    const jobHandlers = require('#jobs/jobHandlers');
     const handler = jobHandlers[name];
 
     if (handler) {

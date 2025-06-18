@@ -41,6 +41,10 @@ const findByExternalId = async (externalId) => {
   return findOne({ externalId });
 };
 
+const findByName = async (names = []) => {
+  return find({ name: { $in: names } });
+};
+
 module.exports = {
   create,
   find,
@@ -48,4 +52,5 @@ module.exports = {
   update,
   updateGenresFromTMDB,
   findByExternalId,
+  findByName,
 };

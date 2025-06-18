@@ -32,6 +32,7 @@ const MoviePoster = (props: MoviePosterProps) => {
         src={posterPath ?? '/No-Poster.png'}
         alt={name || 'no-poster'}
         width={302}
+        priority
         height={441}
         onLoad={() => setPosterLoaded(true)}
       />
@@ -45,6 +46,7 @@ const MoviePoster = (props: MoviePosterProps) => {
           src={backdropPath ?? '/No-backdrop.png'}
           alt={name || 'no-poster'}
           width={772}
+          priority
           height={441}
           onLoad={() => setBackdropLoaded(true)}
         />
