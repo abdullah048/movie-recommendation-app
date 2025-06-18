@@ -2,12 +2,20 @@ services:
   mongo:
     image: mongo
     container_name: movies-mongo
+    ports:
+      - '127.0.0.1:27017:27017'
     volumes:
       - mongo-data:/data/db
+    networks:
+      - proxy-net
 
   redis:
     image: redis
     container_name: movies-redis
+    ports:
+      - '127.0.0.1:6379:6379'
+    networks:
+      - proxy-net
 
   backend:
     image: abdullah048/portfolio:movie-backend
