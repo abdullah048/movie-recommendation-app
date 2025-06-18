@@ -1,0 +1,40 @@
+services:
+  mongo:
+    image: mongo
+    container_name: movies-mongo
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis
+    container_name: movies-redis
+
+  backend:
+    image: abdullah048/portfolio:movie-backend
+    container_name: movies-backend
+    expose:
+      - '8000'
+    env_file:
+      - ./backend/.env
+    networks:
+      - proxy-net
+    depends_on:
+      - mongo
+      - redis
+
+  frontend:
+    image: abdullah048/portfolio:movie-frontend
+    container_name: movies-frontend
+    expose:
+      - '3000'
+    env_file:
+      - ./frontend/.env
+    networks:
+      - proxy-net
+
+volumes:
+  mongo-data:
+
+networks:
+  proxy-net:
+    external: true

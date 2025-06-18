@@ -1,15 +1,27 @@
-FROM node:alpine
+# ------------ STAGE 1: Build Dependencies ------------ #
+FROM node:lts-alpine AS builder
 
-RUN mkdir -p /usr/src/node-app && chown -R node:node /usr/src/node-app
+# Create app directory
+WORKDIR /app
 
-WORKDIR /usr/src/node-app
+# Install only production dependencies first for caching
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev
 
-COPY package.json yarn.lock ./
+# Copy the rest of the app source
+COPY . .
 
-USER node
+# Optionally: transpile, build static assets, etc.
+# RUN npm run build
 
-RUN yarn install --pure-lockfile
+# Copy only production node_modules and built code
+COPY --from=builder /app /app
 
-COPY --chown=node:node . .
+# Set environment variables
+ENV NODE_ENV=production
 
-EXPOSE 3000
+# Expose app port (update if yours is different)
+EXPOSE 8000
+
+# Run the app
+CMD ["node", "src/index.js"]
