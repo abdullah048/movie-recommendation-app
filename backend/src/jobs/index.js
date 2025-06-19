@@ -2,50 +2,48 @@ const config = require('#config/config');
 const logger = require('#config/logger');
 const { jobsQueue } = require('#queues/job.queue');
 
-const MINUTE = 1000 * 60;
-
 const jobs = [
   {
     name: 'Add Popular Movies from TMDB',
-    handler: () => jobsQueue.add('addPopularMovies', {}),
-    interval: MINUTE * 60 * 24 * 30,
-    runInDev: false,
+    jobName: 'addPopularMovies',
+    cron: '0 0 1 * *', // 1st of every month at 00:00
+    runInDev: true,
   },
   {
     name: 'Add Genres from TMDB',
-    handler: () => jobsQueue.add('addGenres', {}),
-    interval: MINUTE * 60 * 24 * 15,
-    runInDev: false,
+    jobName: 'addGenres',
+    cron: '0 0 */15 * *', // Every 15 days (approximated)
+    runInDev: true,
   },
   {
     name: 'Fetch Movie Details From TMDB And Append To DB',
-    handler: () => jobsQueue.add('processMoviesAndAppendToDB', {}),
-    interval: MINUTE * 15,
-    runInDev: true,
+    jobName: 'processMoviesAndAppendToDB',
+    cron: '*/15 * * * *', // Every 15 minutes
+    runInDev: false,
   },
   {
     name: 'Append Searched Movies To Database',
-    handler: () => jobsQueue.add('processSearchedMoviesAndAppendToDB', {}),
-    interval: MINUTE * 15,
-    runInDev: true,
+    jobName: 'processSearchedMoviesAndAppendToDB',
+    cron: '*/15 * * * *', // Every 15 minutes
+    runInDev: false,
   },
 ];
 
-module.exports = () => {
-  const activeJobs = [];
+module.exports = async () => {
+  const activeJobs = config.isProduction ? jobs : jobs.filter((job) => job.runInDev);
 
-  if (!config.isProduction) {
-    const filtered = jobs.filter((item) => item.runInDev);
-    activeJobs.push(...filtered);
-  } else {
-    activeJobs.push(...jobs);
+  for (const job of activeJobs) {
+    await jobsQueue.add(
+      job.jobName,
+      {},
+      {
+        repeat: { cron: job.cron },
+        jobId: `repeat:${job.jobName}`,
+        removeOnComplete: true,
+        removeOnFail: true,
+      }
+    );
+
+    logger.info(`[JOB] ${job.name} registered with CRON: ${job.cron}`);
   }
-
-  activeJobs.forEach((job) => {
-    const { name, handler, interval } = job;
-    logger.info(`[JOB] ${name} registered (${interval / 1000 / 60}m)`);
-
-    handler();
-    setInterval(handler, interval);
-  });
 };
