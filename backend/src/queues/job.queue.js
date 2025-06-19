@@ -8,6 +8,7 @@ const jobsQueue = create('jobs');
 const jobsWorker = new Worker(
   'jobs',
   async (job) => {
+    console.log(`[WORKER] Job received: ${job.name} at ${new Date().toISOString()}`);
     const { name, data } = job;
     const jobHandlers = require('#jobs/jobHandlers');
     const handler = jobHandlers[name];
@@ -15,7 +16,7 @@ const jobsWorker = new Worker(
     if (handler) {
       await handler(data);
     } else {
-      console.error(`No handler found for job: ${name}`);
+      console.error(`[WORKER] No handler found for job: ${name}`);
     }
   },
   { connection: redisInstance }
