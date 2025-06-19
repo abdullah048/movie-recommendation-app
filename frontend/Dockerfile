@@ -1,30 +1,59 @@
-# Step 1: Install dependencies and build the app
-FROM node:lts-alpine AS builder
+# syntax=docker/dockerfile:1
+
+### ---------- Base Image ---------- ###
+FROM node:18-alpine AS base
 
 WORKDIR /app
-
-# Install dependencies
-COPY package*.json ./
-RUN npm install
-
-# Copy source and build
-COPY . .
-RUN npm run build
-
-# Step 2: Serve with Next.js built-in server
-FROM node:lts-alpine AS runner
-
-WORKDIR /app
-
 ENV NODE_ENV=production
 
-# Copy built app and necessary files
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Fixes issues with some packages on Alpine
+RUN apk add --no-cache libc6-compat
 
-# Expose the port
+### ---------- Install Dependencies ---------- ###
+FROM base AS deps
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+### ---------- Builder ---------- ###
+FROM base AS builder
+
+# Copy deps
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy app source
+COPY . .
+
+# Compile next.config.ts to JS
+RUN npx tsc next.config.ts --outDir .next-ts-config
+
+# Replace next.config.js if needed
+RUN cp .next-ts-config/next.config.js ./next.config.js
+
+# Build app (this includes App Router pages and server components)
+RUN npm run build
+
+### ---------- Runner ---------- ###
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+
+# Copy required files from builder
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Use non-root user
+USER nextjs
+
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
