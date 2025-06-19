@@ -28,17 +28,10 @@ export const metadata: Metadata = {
     title: 'MovieMosaic — Personalized Movie Discovery & Sharing',
     description:
       'Find the best movies for every mood. Add to watchlist, rate them, and share what you love with friends on MovieMosaic.',
-    url: 'https://moviemosaic.com',
+    url: 'https://movie-mosiac.asprojects.men',
     type: 'website',
-    images: 'https://moviemosaic.com/logo.svg',
+    images: 'https://movie-mosiac.asprojects.men/hero-img.png',
     siteName: 'MovieMosaic',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'MovieMosaic — Watch, Rate & Share Your Favorite Movies',
-    description:
-      'From thrillers to feel-good comedies — browse by mood, genre, or trend. Build your personal watchlist and share it socially.',
-    images: 'https://moviemosaic.com/twitter-card.jpg',
   },
   robots: 'index, follow',
 };
