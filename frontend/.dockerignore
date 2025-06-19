@@ -5,10 +5,6 @@ yarn-debug.log
 yarn-error.log
 .pnpm-store
 
-# Build output
-.next
-out
-
 # OS/Editor junk
 .DS_Store
 Thumbs.db
