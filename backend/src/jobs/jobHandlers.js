@@ -3,5 +3,6 @@ module.exports = {
   addGenres: require('./addGenres'),
   processMoviesAndAppendToDB: require('./processMoviesAndAppendToDB'),
   processSearchedMoviesAndAppendToDB: require('./processSearchedMoviesAndAppendToDB'),
+  removeOlderMoviesFromDatabase: require('./removeOlderMoviesFromDatabase'),
   addSearchedMoviesToDB: require('./addSearchedMoviesToDb'),
 };

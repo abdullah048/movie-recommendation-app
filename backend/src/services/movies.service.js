@@ -7,8 +7,9 @@ const httpStatus = require('http-status');
 const { jobsQueue } = require('#queues/job.queue');
 const tmdbApi = require('#apis/tmdb.api');
 const { getHomepageBuckets } = require('#utils/dailyBuckets');
+const moment = require('moment');
 
-const { find, count, updateOne, findById, aggregate } = databaseLayer(Model);
+const { find, count, updateOne, findById, aggregate, removeMany } = databaseLayer(Model);
 
 const findMovieById = async (movieId) => {
   return findById(movieId).populate('genres', 'name');
@@ -175,6 +176,15 @@ const getHomepageMovies = async () => {
   return uniqueMovies;
 };
 
+const deleteFiveYearOldMovies = async (batchSize = 1000) => {
+  const fiveYearsAgo = moment().subtract(5, 'years').format('YYYY-MM-DD');
+  console.log(`🗓️  Deleting movies released before: ${fiveYearsAgo}`);
+  const deletedResult = await removeMany({ releaseDate: { $lt: fiveYearsAgo } }, { batchSize });
+  const deletedCount = deletedResult?.deletedCount || 0;
+  console.log(`🗑️  Deleted ${deletedCount} movies older than 5 years.`);
+  return deletedCount;
+};
+
 module.exports = {
   updateMoviesFromTMDB,
   getPaginatedMovies,
@@ -183,4 +193,5 @@ module.exports = {
   fetchTrendingMoviePosters,
   getMoviesFromBucket,
   getHomepageMovies,
+  deleteFiveYearOldMovies,
 };

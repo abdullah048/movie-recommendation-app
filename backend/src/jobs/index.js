@@ -28,6 +28,12 @@ const jobs = [
     cron: '*/15 * * * *', // Every 15 minutes
     runInDev: false,
   },
+  {
+    name: 'Remove Older Movies From Database',
+    jobName: 'removeOlderMoviesFromDatabase',
+    cron: '0 0 1 1,5,9 *', // Every 4 months
+    runInDev: false,
+  },
 ];
 
 module.exports = () => {
