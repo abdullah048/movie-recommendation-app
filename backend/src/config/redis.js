@@ -2,7 +2,7 @@ const Redis = require('ioredis');
 const config = require('#config/config');
 
 const redisClient = new Redis({
-  host: config.redisUri,
+  host: config.redisHost,
   port: config.redisPort,
   maxRetriesPerRequest: null,
 });

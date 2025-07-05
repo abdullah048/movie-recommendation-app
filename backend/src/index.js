@@ -4,9 +4,11 @@ const { connect } = require('#utils/mongoose');
 const app = require('./app');
 const config = require('#config/config');
 const logger = require('#config/logger');
+const qdrantClient = require('#config/qdrant');
 const jobSchedular = require('#jobs/index');
 
 jobSchedular();
+qdrantClient.checkQdrantConnection();
 
 let server;
 connect(config.mongoose.url, config.mongoose.options).then(() => {

@@ -40,6 +40,7 @@
     "prettier"
   ],
   "dependencies": {
+    "@qdrant/js-client-rest": "^1.14.1",
     "axios": "^1.7.9",
     "bullmq": "^5.41.5",
     "compression": "^1.7.4",

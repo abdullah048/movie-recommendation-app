@@ -11,10 +11,12 @@ const envVarsSchema = Joi.object()
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
     TMDB_API_KEY: Joi.string().required().description('TMDB Api key'),
     TMDB_BASE_URL: Joi.string().required().description('TMDB Api key'),
-    REDIS_URI: Joi.string().description('Redis Uri').default('127.0.0.1'),
+    REDIS_HOST: Joi.string().description('Redis Uri').default('127.0.0.1'),
     REDIS_PORT: Joi.number().description('Redis Port').default(6379),
     REDIS_ROLLOUT_THRESHOLD: Joi.number().description('Redis Rollout Threshold').default(3000),
     REDIS_ROLLOUT_LIMIT: Joi.number().description('Redis Rollout Limit').default(20),
+    QDRANT_HOST: Joi.string().description('Qdrant Uri').default('127.0.0.1'),
+    QDRANT_PORT: Joi.number().description('Qdrant Port').default(6333),
   })
   .unknown();
 
@@ -33,10 +35,12 @@ module.exports = {
     return this.isProduction ? 'https' : 'http';
   },
   port: envVars.PORT,
-  redisUri: envVars.REDIS_URI,
+  redisHost: envVars.REDIS_HOST,
   redisPort: envVars.REDIS_PORT,
   redisRolloutThreshold: envVars.REDIS_ROLLOUT_THRESHOLD,
   redisRolloutLimit: envVars.REDIS_ROLLOUT_LIMIT,
+  qdrantHost: envVars.QDRANT_HOST,
+  qdrantPort: envVars.QDRANT_PORT,
   mongoose: {
     url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     options: {
