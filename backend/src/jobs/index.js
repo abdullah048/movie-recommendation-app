@@ -8,6 +8,7 @@ const jobs = [
     name: 'Add Popular Movies from TMDB',
     jobName: 'addPopularMovies',
     cron: '0 0 1 * *', // 1st of every month at 00:00
+    // cron: '* * * * *', // 1st of every month at 00:00
     runInDev: false,
   },
   {
@@ -22,12 +23,12 @@ const jobs = [
     cron: '*/15 * * * *', // Every 15 minutes
     runInDev: false,
   },
-  {
-    name: 'Append Searched Movies To Database',
-    jobName: 'processSearchedMoviesAndAppendToDB',
-    cron: '*/15 * * * *', // Every 15 minutes
-    runInDev: false,
-  },
+  // {
+  //   name: 'Append Searched Movies To Database',
+  //   jobName: 'processSearchedMoviesAndAppendToDB',
+  //   cron: '*/15 * * * *', // Every 15 minutes
+  //   runInDev: false,
+  // },
   {
     name: 'Remove Older Movies From Database',
     jobName: 'removeOlderMoviesFromDatabase',

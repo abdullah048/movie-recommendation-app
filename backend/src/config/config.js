@@ -15,6 +15,7 @@ const envVarsSchema = Joi.object()
     REDIS_PORT: Joi.number().description('Redis Port').default(6379),
     REDIS_ROLLOUT_THRESHOLD: Joi.number().description('Redis Rollout Threshold').default(3000),
     REDIS_ROLLOUT_LIMIT: Joi.number().description('Redis Rollout Limit').default(20),
+    MAX_MOVIES_COUNT: Joi.number().description('Maximum movies to pull from TMDB').default(600),
   })
   .unknown();
 
@@ -50,6 +51,7 @@ module.exports = {
       apiKey: envVars.TMDB_API_KEY,
       baseURL: envVars.TMDB_BASE_URL,
       imageBaseURL: envVars.TMDB_IMAGE_BASE_URL,
+      maxMoviesCount: envVars.MAX_MOVIES_COUNT,
     },
   },
 };
