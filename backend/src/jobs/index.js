@@ -8,7 +8,6 @@ const jobs = [
     name: 'Add Popular Movies from TMDB',
     jobName: 'addPopularMovies',
     cron: '0 0 1 * *', // 1st of every month at 00:00
-    // cron: '* * * * *', // 1st of every month at 00:00
     runInDev: false,
   },
   {
