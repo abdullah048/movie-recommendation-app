@@ -4,7 +4,6 @@ const { findByExternalId, findByName } = require('#services/genre.service');
 const config = require('#config/config');
 const ApiError = require('#utils/ApiError');
 const httpStatus = require('http-status');
-const { jobsQueue } = require('#queues/job.queue');
 const tmdbApi = require('#apis/tmdb.api');
 const { getHomepageBuckets } = require('#utils/dailyBuckets');
 const moment = require('moment');
@@ -20,6 +19,10 @@ const findMoviesPosterPathByViewCount = async (limit = 6) => {
     sort: '-viewCount',
     limit,
   });
+};
+
+const getTotalMoviesInDBCount = async () => {
+  return count();
 };
 
 const updateMoviesFromTMDB = async (movie) => {
@@ -101,7 +104,8 @@ const getPaginatedMovies = async (query) => {
   // If nothing found, trigger background TMDB fetch
   if (dbResults.length === 0) {
     const result = await tmdbApi.searchMovieByName(search);
-    await jobsQueue.add('addSearchedMoviesToDB', result);
+    // TODO: email admin if we get results back for that search keyword.
+    // await jobsQueue.add('addSearchedMoviesToDB', result);
   }
 
   return {
@@ -194,4 +198,5 @@ module.exports = {
   getMoviesFromBucket,
   getHomepageMovies,
   deleteFiveYearOldMovies,
+  getTotalMoviesInDBCount,
 };
