@@ -1,0 +1,6 @@
+# Require @your-username to approve any changes to workflow files
+
+.github/workflows/ @abdullah048
+/docker-compose.yml @abdullah048
+/backend/Dockerfile @abdullah048
+/frontend/Dockerfile @abdullah048
