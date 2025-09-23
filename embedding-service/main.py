@@ -9,7 +9,8 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 async def embed(request: Request):
     data = await request.json()
     text = data.get("text")
+    id = data.get("id")
     if not text:
         return {"error": "Missing 'text'"}
     vector = model.encode(text).tolist()
-    return {"embedding": vector}
+    return {"embedding": vector, "id":id}

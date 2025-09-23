@@ -1,5 +1,5 @@
-import { QdrantClient } from '@qdrant/js-client-rest';
-import config from './config';
+const { QdrantClient } = require('@qdrant/js-client-rest');
+const config = require('#config/config');
 
 const qdrantClient = new QdrantClient({
   host: config.qdrantHost,
@@ -8,8 +8,8 @@ const qdrantClient = new QdrantClient({
 
 async function checkQdrantConnection() {
   try {
-    const health = await qdrantClient.getCollections();
-    console.log('✅ Connected to Qdrant', health);
+    const health = await qdrantClient.versionInfo();
+    console.log('✅ Connected to', health.title + ' v' + health.version);
   } catch (error) {
     console.error('❌ Qdrant connection failed:', error.message);
   }
